@@ -2,23 +2,39 @@ const User = require('../models/User');
 
 const registerUser = async (req, res) => {
   try {
-    const { fullName, email, password, monthlyIncome, savingsGoal, monthlyBudget } = req.body;
+    const {
+      fullName,
+      userId,
+      email,
+      phoneNumber,
+      password,
+      monthlyIncome,
+      savingsGoal,
+      monthlyBudget
+    } = req.body;
 
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+    const emailExists = await User.findOne({ email });
+    if (emailExists) {
+      return res.status(400).json({ message: 'Email is already registered' });
     }
 
-    const user = new User({
+    const userIdExists = await User.findOne({ userId });
+    if (userIdExists) {
+      return res.status(400).json({ message: 'User ID is already taken' });
+    }
+
+    const newUser = new User({
       fullName,
+      userId,
       email,
+      phoneNumber,
       password,
       monthlyIncome,
       savingsGoal,
       monthlyBudget
     });
 
-    await user.save();
+    await newUser.save();
     res.status(201).json({ message: 'User registered successfully!' });
 
   } catch (error) {
